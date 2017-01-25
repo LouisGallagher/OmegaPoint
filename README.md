@@ -1,2 +1,2 @@
 # OmegaPoint
-OmegaPoint is a tool for aggregating multiple RGB-D streams into a single LCM log. 
+OmegaPoint is a library for handling multiple RGB-D streams contained in an LCM log or sent over a network via LCM. 
