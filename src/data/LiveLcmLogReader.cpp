@@ -3,35 +3,28 @@
 LiveLcmLogReader::LiveLcmLogReader(std::string name)
 :LogReader("", false),
  name(name),
- lastFrameTime(-1),
- lastGot(-1),
  frameBuffers(100)
-{
-	decompressionBufferDepth = new Bytef[Options::get().width * Options::get().height * 2];
-	decompressionBufferImage = new Bytef[Options::get().width * Options::get().height * 3];
-}
+{}
 
 LiveLcmLogReader::~LiveLcmLogReader()
-{
-	delete [] decompressionBufferImage;
-	delete [] decompressionBufferDepth;
-}
+{}
 
 void LiveLcmLogReader::getNext()
 {
+	if(!hasMore()){ return; }
 	delete rgb;
 	delete depth;
  	
-	frameBuffers.pop((uint8_t **)&rgb, (uint8_t **)&depth, timestamp);
-
 	imageSize = Options::get().width * Options::get().height * 3;
 	depthSize = Options::get().width * Options::get().height * 2;
+
+	frameBuffers.pop((uint8_t **)&rgb, (uint8_t **)&depth, timestamp);
 }
 
 void LiveLcmLogReader::onFrame(const lcm::Frame * frame)
 {
-	uint8_t * dp = (uint8_t *)malloc(Options::get().width * Options::get().height * 2);
-	uint8_t * im = (uint8_t *)malloc(Options::get().width * Options::get().height * 3);
+	uint8_t * dp = (uint8_t *)malloc(frame->depthSize);
+	uint8_t * im = (uint8_t *)malloc(frame->imageSize);
 
 	if(frame->compressed)
 	{
@@ -42,18 +35,20 @@ void LiveLcmLogReader::onFrame(const lcm::Frame * frame)
 		CvMat tempMat = cvMat(1, frame->imageSize, CV_8UC1, (void *)(frame->image.data()));
 		IplImage * decompressedImage = cvDecodeImage(&tempMat);
 
-		memcpy(dp, (unsigned char*)&decompressionBuffer[0], Options::get().width * Options::get().height * 2);
-		memcpy(im, (unsigned char*)decompressedImage->imageData, Options::get().width * Options::get().height * 3);
+		memcpy(dp, (unsigned char*)&decompressionBuffer[0], frame->depthSize);
+		memcpy(im, (unsigned char*)decompressedImage->imageData, frame->imageSize);
 
 		cvReleaseImage(&decompressedImage);
 	}
 	else
 	{
-		memcpy(dp, frame->depth.data(), Options::get().width * Options::get().height * 2);
-		memcpy(im, frame->image.data(), Options::get().width * Options::get().height * 3);
+		memcpy(dp, frame->depth.data(), frame->depthSize);
+		memcpy(im, frame->image.data(), frame->imageSize);
 	}
 
 	frameBuffers.push(im, dp, frame->timestamp);
+
+	receivedLast = frame->last;
 }
 
 const std::string LiveLcmLogReader::getFile()

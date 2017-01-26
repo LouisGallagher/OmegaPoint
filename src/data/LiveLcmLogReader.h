@@ -24,7 +24,7 @@ class LiveLcmLogReader : public LogReader
 
         bool hasMore()
         {
-        	return true;
+        	return !receivedLast && !frameBuffers.empty();
         }
 
         bool rewound()
@@ -47,15 +47,9 @@ class LiveLcmLogReader : public LogReader
 		void onFrame(const lcm::Frame * frame);
 
 	private:
-		int64_t lastFrameTime;
-		int lastGot;
-
-		std::atomic<int> latestFrameIndex;
-
 		std::string name;
 
-		/*static const int numBuffers = 100;
-		std::pair<std::pair<uint8_t*, uint8_t*>, int64_t> frameBuffers[numBuffers];*/
+        bool receivedLast;
 
 		CircularBuffer frameBuffers;
 };

@@ -17,6 +17,11 @@ class MultiCameraManager
 
 		std::vector<LiveLcmLogReader *> getDevices() const 
 		{
+			//TODO: remove dead log readers
+			// for()
+			// {
+
+			// }
 			return devices;
 		}
 

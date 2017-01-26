@@ -1,10 +1,8 @@
 #ifndef CIRCULARBUFFER_H_
 #define CIRCULARBUFFER_H_
 
-#define IN
-#define OUT
-
 #include <boost/thread/mutex.hpp>
+#include <boost/thread/lockable_concepts.hpp> 
 #include <boost/circular_buffer.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/thread.hpp>
@@ -41,6 +39,11 @@ class CircularBuffer
 			container.pop_back();
 			lock.unlock();
 			not_full.notify_one();
+		}
+
+		bool empty()
+		{
+			return container.size() == 0;
 		}
 
 	private:
