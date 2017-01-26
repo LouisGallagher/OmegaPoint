@@ -12,6 +12,7 @@ LiveLcmLogReader::~LiveLcmLogReader()
 void LiveLcmLogReader::getNext()
 {
 	if(!hasMore()){ return; }
+
 	delete rgb;
 	delete depth;
  	
@@ -23,8 +24,8 @@ void LiveLcmLogReader::getNext()
 
 void LiveLcmLogReader::onFrame(const lcm::Frame * frame)
 {
-	uint8_t * dp = (uint8_t *)malloc(frame->depthSize);
-	uint8_t * im = (uint8_t *)malloc(frame->imageSize);
+	uint8_t * dp;
+	uint8_t * im; 
 
 	if(frame->compressed)
 	{
@@ -35,13 +36,19 @@ void LiveLcmLogReader::onFrame(const lcm::Frame * frame)
 		CvMat tempMat = cvMat(1, frame->imageSize, CV_8UC1, (void *)(frame->image.data()));
 		IplImage * decompressedImage = cvDecodeImage(&tempMat);
 
-		memcpy(dp, (unsigned char*)&decompressionBuffer[0], frame->depthSize);
-		memcpy(im, (unsigned char*)decompressedImage->imageData, frame->imageSize);
+		dp = (uint8_t *)malloc(decompressedDepthSize);
+		im = (uint8_t *)malloc(decompressedImage->imageSize);
+
+		memcpy(dp, (unsigned char*)&decompressionBuffer[0], decompressedDepthSize);
+		memcpy(im, (unsigned char*)decompressedImage->imageData, decompressedImage->imageSize);
 
 		cvReleaseImage(&decompressedImage);
 	}
 	else
 	{
+		dp = (uint8_t *)malloc(frame->depthSize);
+		im = (uint8_t *)malloc(frame->imageSize);
+
 		memcpy(dp, frame->depth.data(), frame->depthSize);
 		memcpy(im, frame->image.data(), frame->imageSize);
 	}

@@ -11,6 +11,9 @@ void MainController::run()
 {
 	pangolin::CreateWindowAndBind("OmegaPoint", 1280, 960);
 
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
 	pangolin::Display("multi")
 		.SetBounds(0.0, 1.0, 0.0, 1.0)
         .SetLayout(pangolin::LayoutEqual);

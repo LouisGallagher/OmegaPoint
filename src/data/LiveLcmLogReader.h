@@ -24,7 +24,7 @@ class LiveLcmLogReader : public LogReader
 
         bool hasMore()
         {
-        	return !receivedLast && !frameBuffers.empty();
+        	return !receivedLast || !frameBuffers.empty();
         }
 
         bool rewound()
