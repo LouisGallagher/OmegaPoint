@@ -24,6 +24,8 @@ void LiveLcmLogReader::getNext()
 
 void LiveLcmLogReader::onFrame(const lcm::Frame * frame)
 {
+	if((receivedLast = frame->last))return;
+
 	uint8_t * dp;
 	uint8_t * im; 
 
@@ -54,8 +56,6 @@ void LiveLcmLogReader::onFrame(const lcm::Frame * frame)
 	}
 
 	frameBuffers.push(im, dp, frame->timestamp);
-
-	receivedLast = frame->last;
 }
 
 const std::string LiveLcmLogReader::getFile()

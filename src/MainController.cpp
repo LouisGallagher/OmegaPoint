@@ -31,7 +31,7 @@ void MainController::run()
 		for(device = devices.begin(); device != devices.end(); device++)
 		{
 			std::map<std::string, std::pair<pangolin::View &, pangolin::View &>>::iterator views;
-			
+
 			if(liveViews.count((*device)->getName()) == 0)
 			{
 				pangolin::View& im = pangolin::Display((*device)->getName() + "/image")
@@ -43,6 +43,8 @@ void MainController::run()
              	pangolin::Display("multi")
              		.AddDisplay(im)
              		.AddDisplay(dp);
+
+                pangolin::Display("multi").ResizeChildren();
 
              	views = liveViews.insert({(*device)->getName(), {im, dp}}).first;
 			}
