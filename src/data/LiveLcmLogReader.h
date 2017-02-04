@@ -42,8 +42,6 @@ class LiveLcmLogReader : public LogReader
 
         void setAuto(bool value){}
 		
-		std::string getName();
-
 		void onFrame(const lcm::Frame * frame);
 
 	private:

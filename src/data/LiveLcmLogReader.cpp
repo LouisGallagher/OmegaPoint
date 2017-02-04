@@ -26,8 +26,8 @@ void LiveLcmLogReader::onFrame(const lcm::Frame * frame)
 {
 	if((receivedLast = frame->last))return;
 
-	uint8_t * dp;
-	uint8_t * im; 
+	std::unique_ptr<uint8_t> dp;
+	std::unique_ptr<uint8_t> im; 
 
 	if(frame->compressed)
 	{
@@ -59,11 +59,6 @@ void LiveLcmLogReader::onFrame(const lcm::Frame * frame)
 }
 
 const std::string LiveLcmLogReader::getFile()
-{
-	return name;
-}
-
-std::string LiveLcmLogReader::getName()
 {
 	return name;
 }

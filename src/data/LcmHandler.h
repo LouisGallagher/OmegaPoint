@@ -32,7 +32,7 @@ class LcmHandler
 
 				devices.push_back(newDevice);
 
-				deviceDemux[newDevice->getName()] = newDevice;
+				deviceDemux[newDevice->getFile()] = newDevice;
 			}
 			else
 			{

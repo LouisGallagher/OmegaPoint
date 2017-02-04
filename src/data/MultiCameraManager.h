@@ -15,19 +15,15 @@ class MultiCameraManager
 			delete lcm;
 		}
 
-		std::vector<LiveLcmLogReader *> getDevices() const 
+		std::vector<LogReader *> getDevices() const 
 		{
-			//TODO: remove dead log readers
-			// for()
-			// {
-
-			// }
-			return devices;
+			return std::vector<LogReader *>(devices.begin(), devices.end());
 		}
+
 
 	protected:
 		std::vector<LiveLcmLogReader*> devices;
-		std::unordered_map<std::string,LiveLcmLogReader*> deviceDemux;
+		std::unordered_map<std::string, LiveLcmLogReader*> deviceDemux;
 
 		char lcm_url[256];
 		lcm::LCM * lcm;

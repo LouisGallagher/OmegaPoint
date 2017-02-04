@@ -1,6 +1,7 @@
 #ifndef MAINCONTROLLER_H_
 #define MAINCONTROLLER_H_
 
+#include "ImagePair.h"
 #include "../utils/Options.h"
 #include "../data/LiveLcmLogReader.h"
 #include "../data/LiveMultiCameraManager.h"	
@@ -15,12 +16,12 @@ class MainController
 {
 	public:
 		MainController();
-		virtual ~MainController(){}
+		virtual ~MainController();
 
 		void launch(int argc, char ** argv);
 
 	private:
-		LiveMultiCameraManager cameraManager;
+		MultiCameraManager * cameraManager;
 
 		void run();
 };
