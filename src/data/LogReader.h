@@ -13,8 +13,6 @@ class LogReader
         LogReader(std::string file, bool flipColors)
          : flipColors(flipColors),
            timestamp(0),
-           depth(0),
-           rgb(0),
            currentFrame(0),
            decompressionBufferDepth(0),
            decompressionBufferImage(0),
@@ -45,11 +43,19 @@ class LogReader
 
         virtual void setAuto(bool value) = 0;
 
+        virtual std::shared_ptr<unsigned short> depth()
+        {
+          return m_depth;
+        }
+
+        virtual std::shared_ptr<unsigned char> rgb()
+        {
+          return m_rgb;
+        }
+
         bool flipColors;
         int64_t timestamp;
 
-        unsigned short * depth;
-        unsigned char * rgb;
         int currentFrame;
 
     protected:
@@ -60,6 +66,9 @@ class LogReader
         int32_t depthSize;
         int32_t imageSize;
 
+        std::shared_ptr<unsigned short> m_depth;
+        std::shared_ptr<unsigned char> m_rgb;
+
         const std::string file;
         FILE * fp;
         int32_t numFrames;
@@ -68,8 +77,5 @@ class LogReader
         int numPixels;
 
         //JPEGLoader jpeg;
-
 };
-
-
 #endif //LogReader_H_

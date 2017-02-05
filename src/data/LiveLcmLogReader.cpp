@@ -13,21 +13,21 @@ void LiveLcmLogReader::getNext()
 {
 	if(!hasMore()){ return; }
 
-	delete rgb;
-	delete depth;
+	/*delete rgb;
+	delete depth;*/
  	
 	imageSize = Options::get().width * Options::get().height * 3;
 	depthSize = Options::get().width * Options::get().height * 2;
 
-	frameBuffers.pop((uint8_t **)&rgb, (uint8_t **)&depth, timestamp);
+	frameBuffers.pop(m_rgb, m_depth, timestamp);
 }
 
 void LiveLcmLogReader::onFrame(const lcm::Frame * frame)
 {
 	if((receivedLast = frame->last))return;
 
-	std::unique_ptr<uint8_t> dp;
-	std::unique_ptr<uint8_t> im; 
+	std::unique_ptr<unsigned short> dp;
+	std::unique_ptr<unsigned char> im; 
 
 	if(frame->compressed)
 	{
@@ -38,24 +38,24 @@ void LiveLcmLogReader::onFrame(const lcm::Frame * frame)
 		CvMat tempMat = cvMat(1, frame->imageSize, CV_8UC1, (void *)(frame->image.data()));
 		IplImage * decompressedImage = cvDecodeImage(&tempMat);
 
-		dp = (uint8_t *)malloc(decompressedDepthSize);
-		im = (uint8_t *)malloc(decompressedImage->imageSize);
+		dp = std::unique_ptr<unsigned short>((unsigned short *)malloc(decompressedDepthSize));
+		im = std::unique_ptr<unsigned char>((unsigned char *)malloc(decompressedImage->imageSize));
 
-		memcpy(dp, (unsigned char*)&decompressionBuffer[0], decompressedDepthSize);
-		memcpy(im, (unsigned char*)decompressedImage->imageData, decompressedImage->imageSize);
+		memcpy(dp.get(), (unsigned char*)&decompressionBuffer[0], decompressedDepthSize);
+		memcpy(im.get(), (unsigned char*)decompressedImage->imageData, decompressedImage->imageSize);
 
 		cvReleaseImage(&decompressedImage);
 	}
 	else
 	{
-		dp = (uint8_t *)malloc(frame->depthSize);
-		im = (uint8_t *)malloc(frame->imageSize);
+		dp = std::unique_ptr<unsigned short>((unsigned short *)malloc(frame->depthSize));
+		im = std::unique_ptr<unsigned char>((unsigned char *)malloc(frame->imageSize));
 
-		memcpy(dp, frame->depth.data(), frame->depthSize);
-		memcpy(im, frame->image.data(), frame->imageSize);
+		memcpy(dp.get(), frame->depth.data(), frame->depthSize);
+		memcpy(im.get(), frame->image.data(), frame->imageSize);
 	}
 
-	frameBuffers.push(im, dp, frame->timestamp);
+	frameBuffers.push(std::move(im), std::move(dp), frame->timestamp);
 }
 
 const std::string LiveLcmLogReader::getFile()
