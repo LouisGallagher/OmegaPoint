@@ -32,37 +32,37 @@ void MainController::run()
 
 		std::vector<LogReader *>::iterator device;
 
-		for(device = devices.begin(); device != devices.end(); device++)
+		for(auto & device : devices)
 		{
 			std::map<std::string, ImagePair>::iterator view;
 
-			if(liveViews.count((*device)->getFile()) == 0)
+			if(liveViews.count(device->getFile()) == 0)
 			{
-            	pangolin::View& im = pangolin::Display((*device)->getFile() + "/image")
+            	pangolin::View& im = pangolin::Display(device->getFile() + "/image")
     			.SetAspect(640.0f/480.0f);
 
-    			pangolin::View& dp = pangolin::Display((*device)->getFile() + "/depth")
+    			pangolin::View& dp = pangolin::Display(device->getFile() + "/depth")
     			.SetAspect(640.0f/480.0f);
 
-                ImagePair newView(dp, im, (*device)->getFile());
+                ImagePair newView(dp, im, device->getFile());
 
              	pangolin::Display("multi")
              		.AddDisplay(newView.rgb)
              		.AddDisplay(newView.dp);
 
-             	view = liveViews.insert(std::pair<std::string, ImagePair>((*device)->getFile(), newView)).first;
+             	view = liveViews.insert(std::pair<std::string, ImagePair>(device->getFile(), newView)).first;
 			}
 			else
 			{
-				view = liveViews.find((*device)->getFile());
+				view = liveViews.find(device->getFile());
 			}  			
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            (*device)->getNext();
+            device->getNext();
 
-            memcpy(view->second.rgbImg.ptr, (*device)->rgb, 640 * 480 * 3);
-            memcpy(&depthBuffer[0], (*device)->depth, 640 * 480 * 2);
+            memcpy(view->second.rgbImg.ptr, device->rgb().get(), 640 * 480 * 3);
+            memcpy(&depthBuffer[0], device->depth().get(), 640 * 480 * 2);
 
             float max = 0;
             for(int i = 0; i < Options::get().width * Options::get().height; i++)
