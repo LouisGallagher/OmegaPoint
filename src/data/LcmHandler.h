@@ -4,22 +4,20 @@
 #include <vector>
 #include <unordered_map>
 
-#include "LiveLcmLogReader.h"
+#include <lcm/lcm-cpp.hpp>
+
+#include "LcmLogReader.h"
 
 class LcmHandler
 {
 	public:
-		LcmHandler(std::unordered_map<std::string, LiveLcmLogReader*> & deviceDemux, std::vector<LiveLcmLogReader*> & devices)
+		LcmHandler(std::unordered_map<std::string, LcmLogReader*> & deviceDemux, std::vector<LcmLogReader*> & devices)
 		:deviceDemux(deviceDemux),
 		 devices(devices)
-		{
-
-		}
+		{}
 
 		virtual ~LcmHandler()
-		{
-
-		}	
+		{}	
 
 		void onMessage(const lcm::ReceiveBuffer * rbuf,  const std::string & chan, const lcm::Frame * frame)
 		{
@@ -27,7 +25,7 @@ class LcmHandler
 
 			if(device == deviceDemux.end())
 			{
-				LiveLcmLogReader * newDevice = new LiveLcmLogReader(frame->senderName);
+				LcmLogReader * newDevice = new LcmLogReader(frame->senderName);
 				newDevice->onFrame(frame);
 
 				devices.push_back(newDevice);
@@ -41,7 +39,7 @@ class LcmHandler
 		}
 
 	private:
-		std::vector<LiveLcmLogReader * > & devices;
-		std::unordered_map<std::string, LiveLcmLogReader*> & deviceDemux;
+		std::vector<LcmLogReader * > & devices;
+		std::unordered_map<std::string, LcmLogReader*> & deviceDemux;
 };
 #endif//LCMHANDLER

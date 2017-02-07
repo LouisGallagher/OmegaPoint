@@ -2,14 +2,10 @@
 
 
 MainController::MainController()
-{
-    cameraManager = new LiveMultiCameraManager();
-}
+{}
 
 MainController::~MainController()
-{
-    delete cameraManager;
-}
+{}
 
 void MainController::run()
 {
@@ -28,7 +24,7 @@ void MainController::run()
 
 	while(!pangolin::ShouldQuit())
 	{
-		std::vector<LogReader *> devices = cameraManager->getDevices();
+		std::vector<LogReader *> devices = cameraManager.getDevices();
 
 		std::vector<LogReader *>::iterator device;
 

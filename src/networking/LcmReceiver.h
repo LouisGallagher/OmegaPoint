@@ -1,5 +1,5 @@
-#ifndef LCMHANDLER 
-#define LCMHANDLER
+#ifndef LCMRECEIVER_H_
+#define LCMRECEIVER_H_
 
 #include <lcm/lcm-cpp.hpp>
 
@@ -27,4 +27,4 @@ class LcmReceiver
 
 		std::atomic_flag receiving{false};
 };
-#endif //LCMHandler
+#endif //LCMRECEIVER_H_

@@ -3,8 +3,8 @@
 
 #include "ImagePair.h"
 #include "../utils/Options.h"
-#include "../data/LiveLcmLogReader.h"
-#include "../data/LiveMultiCameraManager.h"	
+#include "../data/LcmLogReader.h"
+#include "../data/MultiCameraManager.h"	
 
 #include <iostream>
 #include <vector>
@@ -21,7 +21,7 @@ class MainController
 		void launch(int argc, char ** argv);
 
 	private:
-		MultiCameraManager * cameraManager;
+		MultiCameraManager cameraManager;
 
 		void run();
 };
